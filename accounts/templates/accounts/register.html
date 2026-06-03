@@ -1,0 +1,130 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>ثبت نام | سینما آنلاین</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="icon" type="image/png" href="{% static 'accounts/images/icons/favicon.ico' %}"/>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'accounts/vendor/bootstrap/css/bootstrap.min.css' %}">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'accounts/fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'accounts/vendor/animate/animate.css' %}">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'accounts/vendor/css-hamburgers/hamburgers.min.css' %}">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'accounts/vendor/select2/select2.min.css' %}">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'accounts/css/util.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'accounts/css/main.css' %}">
+
+</head>
+<body>
+
+<div class="limiter">
+    <div class="container-login100">
+        <div class="wrap-login100">
+            <div class="login100-pic js-tilt" data-tilt>
+                <img src="{% static 'accounts/images/img-01.png' %}" alt="IMG">
+            </div>
+
+            <form class="login100-form validate-form" method="post">
+                {% csrf_token %}
+                <span class="login100-form-title">
+                    ثبت نام در سینما آنلاین
+                </span>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{% if 'error' in message.tags %}danger{% else %}success{% endif %}" style="text-align: center; margin-bottom: 20px; color: {% if 'error' in message.tags %}red{% else %}green{% endif %};">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <div class="wrap-input100 validate-input" data-validate="نام کاربری الزامی است">
+                    <input class="input100" type="text" name="username" placeholder="نام کاربری">
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                    </span>
+                </div>
+
+                <div class="wrap-input100 validate-input" data-validate="ایمیل الزامی است">
+                    <input class="input100" type="email" name="email" placeholder="ایمیل">
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100">
+                        <i class="fa fa-envelope" aria-hidden="true"></i>
+                    </span>
+                </div>
+
+                <div class="wrap-input100 validate-input" data-validate="رمز عبور الزامی است">
+                    <input class="input100" type="password" name="password" id="password" placeholder="رمز عبور">
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100">
+                        <i class="fa fa-lock" aria-hidden="true"></i>
+                    </span>
+                </div>
+
+                <div class="wrap-input100 validate-input" data-validate="تکرار رمز عبور الزامی است">
+                    <input class="input100" type="password" name="confirm_password" id="confirm_password" placeholder="تکرار رمز عبور">
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100">
+                        <i class="fa fa-lock" aria-hidden="true"></i>
+                    </span>
+                </div>
+
+                <div class="container-login100-form-btn">
+                    <button class="login100-form-btn">
+                        ثبت نام
+                    </button>
+                </div>
+
+                <div class="text-center p-t-136">
+                    <a class="txt2" href="/login">
+                        قبلاً ثبت نام کرده‌اید؟ ورود
+                        <i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'accounts/vendor/jquery/jquery-3.2.1.min.js' %}"></script>
+<script src="{% static 'accounts/vendor/bootstrap/js/popper.js' %}"></script>
+<script src="{% static 'accounts/vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'accounts/vendor/select2/select2.min.js' %}"></script>
+<script src="{% static 'accounts/vendor/tilt/tilt.jquery.min.js' %}"></script>
+<script>
+    $('.js-tilt').tilt({
+        scale: 1.1
+    })
+
+    // بررسی تطابق رمز عبور
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirm_password');
+
+    confirmPassword.addEventListener('input', function() {
+        if (this.value !== password.value) {
+            this.setCustomValidity('رمز عبور مطابقت ندارد');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+
+    password.addEventListener('input', function() {
+        if (confirmPassword.value !== this.value) {
+            confirmPassword.setCustomValidity('رمز عبور مطابقت ندارد');
+        } else {
+            confirmPassword.setCustomValidity('');
+        }
+    });
+</script>
+<script src="{% static 'accounts/js/main.js' %}"></script>
+
+</body>
+</html>

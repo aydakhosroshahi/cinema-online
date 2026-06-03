@@ -1,0 +1,624 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سینما آنلاین | تماشای فیلم و سریال</title>
+    <link rel="stylesheet" href="{% static 'home/css/style.css' %}">
+</head>
+<body>
+<div class="container">
+    <header>
+        <div class="navbar">
+            <button class="navbar-menu-btn">
+                <span class="one"></span>
+                <span class="two"></span>
+                <span class="three"></span>
+            </button>
+            <a href="/" class="navbar-brand">
+                <img src="{% static 'home/images/logo.png' %}" alt="logo" style="width: 60px !important; height: auto;">
+            </a>
+            <nav>
+                <ul class="navbar-nav">
+                    <li><a href="/" class="navbar-link">خانه</a></li>
+                    <li><a href="#category" class="navbar-link">دسته بندی</a></li>
+                    <li><a href="#live" class="navbar-link indicator">پخش زنده</a></li>
+                </ul>
+            </nav>
+            <div class="navbar-actions">
+                <form action="" class="navbar-form">
+                    <input type="text" name="search" placeholder="جستجوی فیلم، سریال، بازیگر..."
+                           class="navbar-form-search" id="searchInput">
+                    <button class="navbar-form-btn" type="button" id="searchBtn">
+                        <ion-icon name="search-outline"></ion-icon>
+                    </button>
+                    <button class="navbar-form-close" type="button" id="searchCloseBtn">
+                        <ion-icon name="close-circle-outline"></ion-icon>
+                    </button>
+                    <button class="navbar-search-close" type="button">
+                        <ion-icon name="close-outline"></ion-icon>
+                    </button>
+                </form>
+                <a href="/login" class="navbar-signin">
+                    <span>ورود</span>
+                    <ion-icon name="log-in-outline"></ion-icon>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="banner">
+            <div class="banner-slider">
+                {% for movie in slider_movies %}
+                <div class="banner-card {% if forloop.first %}active{% endif %}">
+                    <img src="{{ movie.image.url }}" alt="{{ movie.title }}">
+                    <div class="card-content">
+                        <div class="card-info">
+                            <div class="genre">
+                                <ion-icon name="videocam-outline"></ion-icon>
+                                <span>{% for g in movie.genre.all %}{{ g.name }}{% if not forloop.last %} / {% endif %}{% endfor %}</span>
+                            </div>
+                            <div class="year">
+                                <ion-icon name="calendar-clear-outline"></ion-icon>
+                                <span>{{ movie.year }}</span>
+                            </div>
+                            <div class="duration">
+                                <ion-icon name="time-outline"></ion-icon>
+                                <span>{{ movie.duration }} دقیقه</span>
+                            </div>
+                            <div class="quality">{{ movie.quality }}</div>
+                        </div>
+                        <h2 class="card-title">{{ movie.title }}</h2>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if slider_movies|length > 1 %}
+            <button class="slider-prev" id="sliderPrev">
+                <ion-icon name="chevron-back-outline"></ion-icon>
+            </button>
+            <button class="slider-next" id="sliderNext">
+                <ion-icon name="chevron-forward-outline"></ion-icon>
+            </button>
+            <div class="slider-dots">
+                {% for movie in slider_movies %}
+                <span class="dot {% if forloop.first %}active{% endif %}" data-slide="{{ forloop.counter0 }}"></span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </section>
+
+        <section class="movies">
+            <div class="advanced-filter">
+                <div class="filter-header">
+                    <h3>فیلتر پیشرفته</h3>
+                    <button class="reset-filters" id="resetFiltersBtn">حذف همه فیلترها</button>
+                </div>
+
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label>جستجو در فیلم‌ها</label>
+                        <input type="text" id="movieSearchInput" placeholder="نام فیلم، بازیگر، کارگردان..."
+                               class="filter-input">
+                    </div>
+                </div>
+
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label>ژانر</label>
+                        <select id="genreSelect" class="filter-select">
+                            <option value="">همه ژانرها</option>
+                            {% for genre in genres %}
+                            <option value="{{ genre.name }}">{{ genre.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>سال انتشار</label>
+                        <select id="yearSelect" class="filter-select">
+                            <option value="">همه سال‌ها</option>
+                            {% for year in years %}
+                            <option value="{{ year }}">{{ year }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>امتیاز</label>
+                        <select id="ratingSelect" class="filter-select">
+                            <option value="">همه امتیازها</option>
+                            <option value="9">⭐ ۹ به بالا</option>
+                            <option value="8">⭐ ۸ به بالا</option>
+                            <option value="7">⭐ ۷ به بالا</option>
+                            <option value="6">⭐ ۶ به بالا</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>کیفیت</label>
+                        <select id="qualitySelect" class="filter-select">
+                            <option value="">همه کیفیت‌ها</option>
+                            <option value="4k">4K</option>
+                            <option value="1080p">1080p</option>
+                            <option value="720p">720p</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="filter-row">
+                    <div class="filter-group checkbox-group">
+                        <label>وضعیت</label>
+                        <div class="checkbox-options">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="hasHighRating" value="highRating"> دارای امتیاز بالا (۸+)
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="isNewRelease" value="newRelease"> اکران جدید (۲۰۲۴-۲۰۲۵)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-stats" id="filterStats">
+                    <span id="resultsCount">{{ latest_movies|length }}</span> فیلم یافت شد
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <div class="filter-dropdowns">
+                    <select class="genre" id="simpleGenreFilter">
+                        <option value="">همه ژانر ها</option>
+                        {% for genre in genres %}
+                        <option value="{{ genre.name }}">{{ genre.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <select class="year" id="simpleYearFilter">
+                        <option value="">سال ساخت</option>
+                        {% for year in years %}
+                        <option value="{{ year }}">{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-radios">
+                    <input type="radio" name="input" id="featured" checked>
+                    <label for="featured">ویژه</label>
+                    <input type="radio" name="input" id="populare">
+                    <label for="populare">محبوب</label>
+                    <input type="radio" name="input" id="newest">
+                    <label for="newest">جدیدترین</label>
+                    <div class="checked-radio-bg"></div>
+                </div>
+            </div>
+
+            <div class="movies-grid" id="moviesGrid">
+                {% for movie in latest_movies %}
+                <a href="{% url 'movies:detail' movie.slug %}" class="movie-card" style="text-decoration: none;" data-title="{{ movie.title }}" data-genre="{% for g in movie.genre.all %}{{ g.name }}{% if not forloop.last %},{% endif %}{% endfor %}" data-year="{{ movie.year }}" data-rating="{{ movie.rating }}" data-quality="{{ movie.quality }}">
+                    <div class="card-head">
+                        <img src="{{ movie.image.url }}" alt="{{ movie.title }}">
+                        <div class="card-overlay">
+                            <div class="bookmark">
+                                <ion-icon name="bookmark-outline"></ion-icon>
+                            </div>
+                            <div class="rating">
+                                <span>⭐ {{ movie.rating }}</span>
+                            </div>
+                            <div class="play">
+                                <ion-icon name="play-circle-outline"></ion-icon>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">{{ movie.title }}</h3>
+                        <div class="card-info">
+                            <span class="genre">{% for g in movie.genre.all %}{{ g.name }}{% if not forloop.last %}/{% endif %}{% endfor %}</span>
+                            <span class="year">{{ movie.year }}</span>
+                            <span class="quality">{{ movie.quality }}</span>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+
+            <button class="load-more" id="loadMoreBtn">نمایش بیشتر</button>
+        </section>
+
+        <section class="category" id="category">
+            <h2 class="section-heading">دسته بندی</h2>
+            <div class="category-grid">
+                {% for category in categories %}
+                <div class="category-card">
+                    <img src="{% static 'home/images/' %}{{ category.image }}" alt="{{ category.name }}">
+                    <div class="card-overlay-category">
+                        <div class="name">{{ category.name }}</div>
+                        <div class="total">{{ category.count }} فیلم</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="live" id="live">
+            <h2 class="section-heading">برنامه های زنده</h2>
+            <div class="live-grid">
+                <div class="live-card">
+                    <div class="card-head">
+                        <img src="{% static 'home/images/plantt.jpg' %}" alt="got">
+                        <div class="live-badge">زنده</div>
+                        <div class="total-viewers">200k بیننده</div>
+                        <div class="play">
+                            <ion-icon name="play-circle-outline"></ion-icon>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">
+                            سیاره زمین
+                            <br>
+                            فصل 1 - جزایر
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="live-card">
+                    <div class="card-head">
+                        <img src="{% static 'home/images/football.jpg' %}" alt="football">
+                        <div class="live-badge">زنده</div>
+                        <div class="total-viewers">500k بیننده</div>
+                        <div class="play">
+                            <ion-icon name="play-circle-outline"></ion-icon>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">
+                            لیگ قهرمانان اروپا
+                            <br>
+                            فینال 2025
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="live-card">
+                    <div class="card-head">
+                        <img src="{% static 'home/images/concert.jpg' %}" alt="concert">
+                        <div class="live-badge">زنده</div>
+                        <div class="total-viewers">120k بیننده</div>
+                        <div class="play">
+                            <ion-icon name="play-circle-outline"></ion-icon>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">
+                            کنسرت آنلاین
+                            <br>
+                            شب موسیقی پاپ
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="live-card">
+                    <div class="card-head">
+                        <img src="{% static 'home/images/interview.jpg' %}" alt="interview">
+                        <div class="live-badge">زنده</div>
+                        <div class="total-viewers">80k بیننده</div>
+                        <div class="play">
+                            <ion-icon name="play-circle-outline"></ion-icon>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">
+                            مصاحبه اختصاصی
+                            <br>
+                            با کارگردان مشهور
+                        </h3>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <img src="{% static 'home/images/logo.png' %}" alt="logo">
+                <p class="description">
+                    بهترین و به روز ترین فیلم ها و سریال هارا با بهترین سرعت دانلود کنید
+                </p>
+                <div class="social-link">
+                    <a href="#">
+                        <ion-icon name="logo-youtube"></ion-icon>
+                    </a>
+                    <a href="#">
+                        <ion-icon name="logo-tiktok"></ion-icon>
+                    </a>
+                    <a href="#">
+                        <ion-icon name="logo-twitter"></ion-icon>
+                    </a>
+                    <a href="#">
+                        <ion-icon name="logo-instagram"></ion-icon>
+                    </a>
+                    <a href="#">
+                        <ion-icon name="prism-outline"></ion-icon>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <ul>
+                    <h4 class="link-heading">سینما آنلاین</h4>
+                    <li class="link-item"><a href="#">درباره ما</a></li>
+                    <li class="link-item"><a href="#">پروفایل من</a></li>
+                    <li class="link-item"><a href="#">طرح های قیمت گذاری</a></li>
+                    <li class="link-item"><a href="#">تماس با ما</a></li>
+                </ul>
+                <ul>
+                    <h4 class="link-heading">مرور</h4>
+                    <li class="link-item"><a href="#">درباره ما</a></li>
+                    <li class="link-item"><a href="#">پروفایل من</a></li>
+                    <li class="link-item"><a href="#">طرح های قیمت گذاری</a></li>
+                    <li class="link-item"><a href="#">تماس با ما</a></li>
+                </ul>
+                <ul>
+                    <h4 class="link-heading">محتوای ما</h4>
+                    <li class="link-item"><a href="#">درباره ما</a></li>
+                    <li class="link-item"><a href="#">پروفایل من</a></li>
+                    <li class="link-item"><a href="#">طرح های قیمت گذاری</a></li>
+                    <li class="link-item"><a href="#">تماس با ما</a></li>
+                </ul>
+                <ul>
+                    <h4 class="link-heading">راهنما</h4>
+                    <li class="link-item"><a href="#">درباره ما</a></li>
+                    <li class="link-item"><a href="#">پروفایل من</a></li>
+                    <li class="link-item"><a href="#">طرح های قیمت گذاری</a></li>
+                    <li class="link-item"><a href="#">تماس با ما</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            <div class="copy-right">
+                <p> کلیه حقوق محفوظ است</p>
+            </div>
+            <div class="wrapper">
+                <a href="#"> حریم خصوصی</a>
+                <a href="#">قوانین و شرایط</a>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<script>
+    const moviesGrid = document.getElementById('moviesGrid');
+    const movieCards = document.querySelectorAll('.movie-card');
+    const resultsCountSpan = document.getElementById('resultsCount');
+    const resetFiltersBtn = document.getElementById('resetFiltersBtn');
+
+    const movieSearchInput = document.getElementById('movieSearchInput');
+    const genreSelect = document.getElementById('genreSelect');
+    const yearSelect = document.getElementById('yearSelect');
+    const ratingSelect = document.getElementById('ratingSelect');
+    const qualitySelect = document.getElementById('qualitySelect');
+    const hasHighRating = document.getElementById('hasHighRating');
+    const isNewRelease = document.getElementById('isNewRelease');
+
+    const simpleGenreFilter = document.getElementById('simpleGenreFilter');
+    const simpleYearFilter = document.getElementById('simpleYearFilter');
+    const filterRadios = document.querySelectorAll('.filter-radios input');
+    const headerSearchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+
+    function filterMovies() {
+        const searchText = (movieSearchInput?.value || headerSearchInput?.value || '').toLowerCase();
+        const selectedGenre = genreSelect?.value || simpleGenreFilter?.value || '';
+        const selectedYear = yearSelect?.value || simpleYearFilter?.value || '';
+        const selectedRating = ratingSelect?.value || '';
+        const selectedQuality = qualitySelect?.value || '';
+        const highRatingOnly = hasHighRating?.checked || false;
+        const newReleaseOnly = isNewRelease?.checked || false;
+
+        let visibleCount = 0;
+
+        movieCards.forEach(card => {
+            const title = card.getAttribute('data-title') || '';
+            const genres = card.getAttribute('data-genre') || '';
+            const year = parseInt(card.getAttribute('data-year') || '0');
+            const rating = parseFloat(card.getAttribute('data-rating') || '0');
+            const quality = card.getAttribute('data-quality') || '';
+
+            let show = true;
+
+            if (searchText && !title.toLowerCase().includes(searchText) && !genres.toLowerCase().includes(searchText)) show = false;
+            if (show && selectedGenre && !genres.includes(selectedGenre)) show = false;
+            if (show && selectedYear && year.toString() !== selectedYear) show = false;
+            if (show && selectedRating) {
+                const minRating = parseInt(selectedRating);
+                if (rating < minRating) show = false;
+            }
+            if (show && selectedQuality && quality !== selectedQuality) show = false;
+            if (show && highRatingOnly && rating < 8) show = false;
+            if (show && newReleaseOnly && year < 2024) show = false;
+
+            if (show) {
+                card.style.display = 'block';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        if (resultsCountSpan) resultsCountSpan.innerText = visibleCount;
+
+        // ریست دکمه نمایش بیشتر بعد از فیلتر
+        if (loadMoreBtn) {
+            loadMoreBtn.style.display = visibleCount > 8 ? 'block' : 'none';
+            visibleMovies = 8;
+            setTimeout(() => {
+                const visibleCards = Array.from(movieCards).filter(card => card.style.display !== 'none');
+                for (let i = 0; i < visibleCards.length; i++) {
+                    visibleCards[i].style.display = i < 8 ? 'block' : 'none';
+                }
+            }, 10);
+        }
+    }
+
+    function resetAllFilters() {
+        if (movieSearchInput) movieSearchInput.value = '';
+        if (headerSearchInput) headerSearchInput.value = '';
+        if (genreSelect) genreSelect.value = '';
+        if (yearSelect) yearSelect.value = '';
+        if (ratingSelect) ratingSelect.value = '';
+        if (qualitySelect) qualitySelect.value = '';
+        if (simpleGenreFilter) simpleGenreFilter.value = '';
+        if (simpleYearFilter) simpleYearFilter.value = '';
+        if (hasHighRating) hasHighRating.checked = false;
+        if (isNewRelease) isNewRelease.checked = false;
+
+        filterRadios.forEach(radio => {
+            if (radio.id === 'featured') radio.checked = true;
+        });
+
+        filterMovies();
+    }
+
+    if (movieSearchInput) movieSearchInput.addEventListener('input', filterMovies);
+    if (headerSearchInput) headerSearchInput.addEventListener('input', filterMovies);
+    if (searchBtn) searchBtn.addEventListener('click', filterMovies);
+    if (genreSelect) genreSelect.addEventListener('change', filterMovies);
+    if (yearSelect) yearSelect.addEventListener('change', filterMovies);
+    if (ratingSelect) ratingSelect.addEventListener('change', filterMovies);
+    if (qualitySelect) qualitySelect.addEventListener('change', filterMovies);
+    if (simpleGenreFilter) simpleGenreFilter.addEventListener('change', filterMovies);
+    if (simpleYearFilter) simpleYearFilter.addEventListener('change', filterMovies);
+    if (hasHighRating) hasHighRating.addEventListener('change', filterMovies);
+    if (isNewRelease) isNewRelease.addEventListener('change', filterMovies);
+    if (resetFiltersBtn) resetFiltersBtn.addEventListener('click', resetAllFilters);
+
+    filterRadios.forEach(radio => {
+        radio.addEventListener('change', filterMovies);
+    });
+
+    const menuBtn = document.querySelector('.navbar-menu-btn');
+    const nav = document.querySelector('nav');
+    const navbarNav = document.querySelector('.navbar-nav');
+
+    if (menuBtn && nav && navbarNav) {
+        menuBtn.addEventListener('click', function () {
+            this.classList.toggle('active');
+            nav.classList.toggle('active');
+            navbarNav.classList.toggle('active');
+        });
+
+        document.querySelectorAll('.navbar-link').forEach(link => {
+            link.addEventListener('click', () => {
+                menuBtn.classList.remove('active');
+                nav.classList.remove('active');
+                navbarNav.classList.remove('active');
+            });
+        });
+    }
+
+    const searchCloseBtn = document.getElementById('searchCloseBtn');
+    const navbarForm = document.querySelector('.navbar-form');
+
+    if (searchBtn && navbarForm) {
+        searchBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            navbarForm.classList.add('active');
+            if (headerSearchInput) headerSearchInput.focus();
+        });
+    }
+
+    if (searchCloseBtn && navbarForm) {
+        searchCloseBtn.addEventListener('click', function () {
+            navbarForm.classList.remove('active');
+            if (headerSearchInput) headerSearchInput.value = '';
+            filterMovies();
+        });
+    }
+
+    const slides = document.querySelectorAll('.banner-card');
+    const prevBtn = document.getElementById('sliderPrev');
+    const nextBtn = document.getElementById('sliderNext');
+    const dots = document.querySelectorAll('.dot');
+
+    let currentSlide = 0;
+    let slideInterval;
+
+    function showSlide(index) {
+        if (!slides.length) return;
+        slides.forEach(slide => slide.classList.remove('active'));
+        if (dots.length) dots.forEach(dot => dot.classList.remove('active'));
+        if (index < 0) index = slides.length - 1;
+        if (index >= slides.length) index = 0;
+        slides[index].classList.add('active');
+        if (dots[index]) dots[index].classList.add('active');
+        currentSlide = index;
+    }
+
+    function nextSlide() { showSlide(currentSlide + 1); }
+    function prevSlide() { showSlide(currentSlide - 1); }
+    function startAutoSlide() { if (slides.length > 1) { slideInterval = setInterval(nextSlide, 5000); } }
+    function stopAutoSlide() { clearInterval(slideInterval); }
+
+    if (prevBtn && nextBtn && slides.length > 1) {
+        prevBtn.addEventListener('click', () => { prevSlide(); stopAutoSlide(); startAutoSlide(); });
+        nextBtn.addEventListener('click', () => { nextSlide(); stopAutoSlide(); startAutoSlide(); });
+        dots.forEach((dot, index) => { dot.addEventListener('click', () => { showSlide(index); stopAutoSlide(); startAutoSlide(); }); });
+        startAutoSlide();
+        const banner = document.querySelector('.banner');
+        if (banner) {
+            banner.addEventListener('mouseenter', stopAutoSlide);
+            banner.addEventListener('mouseleave', startAutoSlide);
+        }
+    }
+
+    // ========== دکمه نمایش بیشتر ==========
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    let visibleMovies = 8;
+    const allMovies = document.querySelectorAll('.movie-card');
+
+    function updateLoadMoreButton() {
+        if (loadMoreBtn) {
+            const visibleCount = Array.from(allMovies).filter(card => card.style.display !== 'none').length;
+            loadMoreBtn.style.display = visibleCount > visibleMovies ? 'block' : 'none';
+        }
+    }
+
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', function() {
+            const hiddenMovies = Array.from(allMovies).filter(card =>
+                card.style.display !== 'none' && card.offsetParent === null
+            );
+
+            for (let i = 0; i < 4 && i < hiddenMovies.length; i++) {
+                hiddenMovies[i].style.display = 'block';
+            }
+
+            const stillHidden = Array.from(allMovies).filter(card =>
+                card.style.display !== 'none' && card.offsetParent === null
+            ).length;
+
+            if (stillHidden === 0) {
+                loadMoreBtn.style.display = 'none';
+            }
+        });
+    }
+
+    // تنظیم اولیه فیلم‌ها
+    setTimeout(() => {
+        const allCards = Array.from(allMovies);
+        for (let i = 0; i < allCards.length; i++) {
+            allCards[i].style.display = i < 8 ? 'block' : 'none';
+        }
+        if (loadMoreBtn && allCards.length <= 8) {
+            loadMoreBtn.style.display = 'none';
+        }
+    }, 100);
+
+    filterMovies();
+</script>
+
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

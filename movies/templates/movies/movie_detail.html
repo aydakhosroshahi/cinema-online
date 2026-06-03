@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ movie.title }} | سینما آنلاین</title>
+    <link rel="stylesheet" href="{% static 'home/css/style.css' %}">
+</head>
+<body>
+<div class="container">
+    <header>
+        <div class="navbar">
+            <button class="navbar-menu-btn">
+                <span class="one"></span>
+                <span class="two"></span>
+                <span class="three"></span>
+            </button>
+            <a href="/" class="navbar-brand">
+                <img src="{% static 'home/images/logo.png' %}" alt="logo" style="width: 60px !important; height: auto;">
+            </a>
+            <nav>
+                <ul class="navbar-nav">
+                    <li><a href="/" class="navbar-link">خانه</a></li>
+                    <li><a href="/#category" class="navbar-link">دسته بندی</a></li>
+                    <li><a href="/#live" class="navbar-link indicator">پخش زنده</a></li>
+                </ul>
+            </nav>
+            <div class="navbar-actions">
+                <form action="" class="navbar-form">
+                    <input type="text" name="search" placeholder="جستجوی فیلم، سریال، بازیگر..."
+                           class="navbar-form-search" id="searchInput">
+                    <button class="navbar-form-btn" type="button" id="searchBtn">
+                        <ion-icon name="search-outline"></ion-icon>
+                    </button>
+                </form>
+                <a href="/login" class="navbar-signin">
+                    <span>ورود</span>
+                    <ion-icon name="log-in-outline"></ion-icon>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main style="padding: 40px 115px;">
+        <a href="/" style="display: inline-block; background: #7c3aed; padding: 10px 25px; border-radius: 10px; color: white; margin-bottom: 20px;">
+            <ion-icon name="arrow-back-outline"></ion-icon> بازگشت به صفحه اصلی
+        </a>
+
+        <div style="display: grid; grid-template-columns: 300px 1fr; gap: 40px; background: #1a0b2e; border-radius: 20px; padding: 30px;">
+            <div>
+                <img src="{{ movie.image.url }}" alt="{{ movie.title }}" style="width: 100%; border-radius: 15px;">
+            </div>
+
+            <div>
+                <h1 style="font-size: 32px; margin-bottom: 20px;">{{ movie.title }}</h1>
+
+                <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid rgba(124,58,237,0.3);">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <ion-icon name="calendar-clear-outline" style="color: #a855f7;"></ion-icon>
+                        <span>{{ movie.year }}</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <ion-icon name="time-outline" style="color: #a855f7;"></ion-icon>
+                        <span>{{ movie.duration }} دقیقه</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <ion-icon name="star-outline" style="color: #a855f7;"></ion-icon>
+                        <span>⭐ {{ movie.rating }}</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <ion-icon name="videocam-outline" style="color: #a855f7;"></ion-icon>
+                        <span>{{ movie.quality }}</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 25px;">
+                    {% for genre in movie.genre.all %}
+                    <span style="background: #7c3aed; padding: 5px 15px; border-radius: 20px; font-size: 14px;">{{ genre.name }}</span>
+                    {% endfor %}
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <h3 style="color: #a855f7; margin-bottom: 10px;">خلاصه داستان</h3>
+                    <p style="line-height: 1.8;">{{ movie.description|default:"خلاصه داستان این فیلم به زودی اضافه می‌شود..." }}</p>
+                </div>
+
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(124,58,237,0.3);">
+                    <h3 style="color: #a855f7; margin-bottom: 10px;">کارگردان</h3>
+                    <p>{{ movie.director|default:"اطلاعاتی ثبت نشده است" }}</p>
+                </div>
+
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(124,58,237,0.3);">
+                    <h3 style="color: #a855f7; margin-bottom: 10px;">بازیگران</h3>
+                    <p>{{ movie.cast|default:"اطلاعاتی ثبت نشده است" }}</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer style="background: #0f0f1a; padding: 60px 115px 40px; margin-top: 60px;">
+        <div class="footer-content" style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 40px;">
+            <div class="footer-brand" style="max-width: 280px;">
+                <img src="{% static 'home/images/logo.png' %}" alt="logo" style="width: 100px;">
+                <p style="font-size: 14px; margin-top: 20px;">بهترین و به روز ترین فیلم ها و سریال هارا با بهترین سرعت دانلود کنید</p>
+            </div>
+            <div class="footer-copyright" style="text-align: center; width: 100%;">
+                <p>کلیه حقوق محفوظ است</p>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

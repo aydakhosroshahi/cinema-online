@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'home',
     'accounts',
     'movies',
+    'django_filters',
 
 
 
